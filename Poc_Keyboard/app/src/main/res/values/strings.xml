@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Poc_Keyboard</string>
-    <string name="simple_ime">Simple IME</string>
+    <string name="simple_ime">POC Keyboard</string>
     <string name="subtype_en_US">English (US)</string>
+    <string name="subtype_fr_FR">French (FR)</string>
+    <string name="subtype_fr_BE">Belgium (FR)</string>
 </resources>
