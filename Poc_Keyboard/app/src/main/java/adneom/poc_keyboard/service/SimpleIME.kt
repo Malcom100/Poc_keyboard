@@ -174,11 +174,10 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         while ( len > 0) {
             dataWriter.write(buf,0,len)
             len = resourceReader.read(buf)
-            Log.i("Adneom","in")
         }
         dataWriter.flush()
         dataWriter.close()
-        Log.i("Adneom", fileOutput!!.name.plus(fileOutput!!.path))
+        //Log.i("Adneom", fileOutput!!.name.plus(fileOutput!!.path))
     }
 
 }
