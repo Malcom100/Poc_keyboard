@@ -2,14 +2,19 @@ package adneom.poc_keyboard.service
 
 import adneom.poc_keyboard.R
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.media.AudioManager
+import android.net.Uri
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.*
-
+import android.support.v13.view.inputmethod.EditorInfoCompat
+import android.support.v4.content.FileProvider
+import android.util.Log
+import java.io.File
 
 
 /**
@@ -31,6 +36,10 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         (kv as KeyboardView).setKeyboard(keyboard);
         (kv as KeyboardView).setOnKeyboardActionListener(this);
         return kv as KeyboardView
+    }
+
+    override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
+        supportedContentMimeTypes(info)
     }
 
     override fun swipeRight() {}
@@ -55,7 +64,10 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 keyboard?.setShifted(cap)
                 kv?.invalidateAllKeys()
             }
-            Keyboard.KEYCODE_DONE -> ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
+            Keyboard.KEYCODE_DONE -> {
+                //ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
+                //val contentUri : Uri = FileProvider.getUriForFile(this,this.applicationContext.packageName)
+            }
             else -> {
                 var code : Char = primaryCode.toChar()
                 if(Character.isLetter(code) && cap) {
@@ -68,6 +80,7 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onText(text: CharSequence?) {}
 
+
     private fun playClick(keyCode : Int) {
         val am : AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         when(keyCode) {
@@ -77,6 +90,17 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             Keyboard.KEYCODE_DELETE -> am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE)
             else -> am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD)
         }
+    }
+
+    private fun supportedContentMimeTypes (editorInfo : EditorInfo?) {
+        val mimeTypes = EditorInfoCompat.getContentMimeTypes(editorInfo)
+        for(item in mimeTypes){
+            Log.i("Adneom","supported mime is "+item)
+        }
+    }
+
+    private fun createFile(){
+       // var drawable : Drawable = this.getDrawable(R.drawable.dess)
     }
 
 }
