@@ -28,10 +28,6 @@ import android.R.attr.description
 import android.support.v13.view.inputmethod.InputContentInfoCompat
 
 
-
-
-
-
 /**
  * Represents the service whis is called when key of keyboard is taped!
  * Created by gtshilombowanticale on 24-06-17.
@@ -39,18 +35,18 @@ import android.support.v13.view.inputmethod.InputContentInfoCompat
 
 class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
-    var kv : KeyboardView? = null
-    var keyboard : Keyboard? = null
+    var kv: KeyboardView? = null
+    var keyboard: Keyboard? = null
 
-    var cap : Boolean = false
+    var cap: Boolean = false
 
-    val nameFile : String = "image.png"
+    val nameFile: String = "image.png"
 
-    var fileOutput : File? = null
+    var fileOutput: File? = null
 
-    var editorInfo : EditorInfo? = null
+    var editorInfo: EditorInfo? = null
 
-    var myMimes : Array<String>? = null
+    var myMimes: Array<String>? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -61,7 +57,7 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     //create our Keaybaord View
     override fun onCreateInputView(): View {
         kv = layoutInflater.inflate(R.layout.layout_keybaord, null) as KeyboardView;
-        keyboard = Keyboard(this,R.xml.qwerty)
+        keyboard = Keyboard(this, R.xml.qwerty)
         (kv as KeyboardView).setKeyboard(keyboard);
         (kv as KeyboardView).setOnKeyboardActionListener(this);
         return kv as KeyboardView
@@ -87,8 +83,8 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
         val ic: InputConnection = currentInputConnection
         playClick(primaryCode)
-        when(primaryCode) {
-            Keyboard.KEYCODE_DELETE -> ic.deleteSurroundingText(1,0)
+        when (primaryCode) {
+            Keyboard.KEYCODE_DELETE -> ic.deleteSurroundingText(1, 0)
             Keyboard.KEYCODE_SHIFT -> {
                 cap = !cap
                 keyboard?.setShifted(cap)
@@ -96,7 +92,7 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             }
             Keyboard.KEYCODE_DONE -> {
                 //ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
-                val contentUri : Uri = FileProvider.getUriForFile(this,this.applicationContext.packageName,fileOutput)
+                val contentUri: Uri = FileProvider.getUriForFile(this, this.applicationContext.packageName, fileOutput)
 
                 // As you as an IME author are most likely to have to implement your own content provider
                 // to support CommitContent API, it is important to have a clear spec about what
@@ -134,11 +130,11 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 InputConnectionCompat.commitContent(getCurrentInputConnection(), getCurrentInputEditorInfo(), inputContentInfoCompat, flag, null)
             }
             else -> {
-                var code : Char = primaryCode.toChar()
-                if(Character.isLetter(code) && cap) {
+                var code: Char = primaryCode.toChar()
+                if (Character.isLetter(code) && cap) {
                     code = Character.toUpperCase(code);
                 }
-                ic.commitText(code.toString(),1)
+                ic.commitText(code.toString(), 1)
             }
         }
     }
@@ -146,9 +142,9 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onText(text: CharSequence?) {}
 
 
-    private fun playClick(keyCode : Int) {
-        val am : AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        when(keyCode) {
+    private fun playClick(keyCode: Int) {
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        when (keyCode) {
             32 -> am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR)
             Keyboard.KEYCODE_DONE -> am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN)
             10 -> am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN)
@@ -157,22 +153,22 @@ class SimpleIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         }
     }
 
-    private fun supportedContentMimeTypes (editorInfo : EditorInfo?) {
+    private fun supportedContentMimeTypes(editorInfo: EditorInfo?) {
         val mimeTypes = EditorInfoCompat.getContentMimeTypes(editorInfo)
-        for(item in mimeTypes){
-            Log.i("Adneom","supported mime is "+item)
+        for (item in mimeTypes) {
+            Log.i("Adneom", "supported mime is " + item)
         }
     }
 
-    private fun createFile(){
-        fileOutput = File (filesDir,nameFile)
-        var resourceReader : InputStream =  this.resources.openRawResource(R.drawable.dessert_android)
-        var dataWriter : OutputStream = FileOutputStream(fileOutput)
+    private fun createFile() {
+        fileOutput = File(filesDir, nameFile)
+        var resourceReader: InputStream = this.resources.openRawResource(R.drawable.dessert_android)
+        var dataWriter: OutputStream = FileOutputStream(fileOutput)
 
-        var buf : ByteArray = ByteArray(1024)
-        var len : Int = resourceReader.read(buf)
-        while ( len > 0) {
-            dataWriter.write(buf,0,len)
+        var buf: ByteArray = ByteArray(1024)
+        var len: Int = resourceReader.read(buf)
+        while (len > 0) {
+            dataWriter.write(buf, 0, len)
             len = resourceReader.read(buf)
         }
         dataWriter.flush()
